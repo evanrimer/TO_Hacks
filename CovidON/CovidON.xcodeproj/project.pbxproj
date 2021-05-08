@@ -14,6 +14,7 @@
 		C2C56DBB2646FC08006F59E9 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C2C56DBA2646FC08006F59E9 /* Alamofire */; };
 		C2C56DBE2646FE2D006F59E9 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = C2C56DBD2646FE2D006F59E9 /* SwiftyJSON */; };
 		C2C56DC126470043006F59E9 /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = C2C56DC026470043006F59E9 /* Charts */; };
+		C2C56DC326471123006F59E9 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C56DC226471123006F59E9 /* ChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		C2C56DAE2646F1C0006F59E9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C2C56DB12646F1C0006F59E9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C2C56DB32646F1C0006F59E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2C56DC226471123006F59E9 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				C2C56DAA2646F1BE006F59E9 /* CovidONApp.swift */,
+				C2C56DC226471123006F59E9 /* ChartView.swift */,
 				C2C56DAC2646F1BE006F59E9 /* ContentView.swift */,
 				C2C56DAE2646F1C0006F59E9 /* Assets.xcassets */,
 				C2C56DB32646F1C0006F59E9 /* Info.plist */,
@@ -156,6 +159,7 @@
 			files = (
 				C2C56DAD2646F1BE006F59E9 /* ContentView.swift in Sources */,
 				C2C56DAB2646F1BE006F59E9 /* CovidONApp.swift in Sources */,
+				C2C56DC326471123006F59E9 /* ChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
