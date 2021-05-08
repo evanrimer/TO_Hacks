@@ -9,8 +9,16 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView {
+            Text("CovidON")
+                .padding()
+                .foregroundColor(.blue)
+                .font(.title2)
+                .navigationTitle("CovidON")
+                
+        }
+        
+        
     }
 }
 
