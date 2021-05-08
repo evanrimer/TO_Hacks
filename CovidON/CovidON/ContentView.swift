@@ -12,90 +12,162 @@ import Charts
 
 struct ContentView: View {
     
-    @State var region: Region = .kfla
+    @State var region: Region = .toronto
     @State var data: [DataPoint] = []
     @State var text: String = ""
     @State var timePeriod = TimePeriod.oneMonth
+    @State var isPickingRegion = false
+    
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         NavigationView {
-            
-            VStack(alignment: .leading) {
-                
-                VStack(alignment: .leading, spacing: 1.5) {
-                    Text("PUBLIC HEALTH REGION")
-                        .font(.caption)
-                        .foregroundColor(Color("secondary-text"))
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(alignment: .leading) {
                     
                     
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(region.name)
-                            .foregroundColor(.black)
-                        Spacer()
-                        Image(systemName: "chevron.right")
+                    VStack(alignment: .leading, spacing: 1.5) {
+                        Text("PUBLIC HEALTH REGION")
+                            .font(.caption)
+                            .foregroundColor(Color("secondary-text"))
+                        
+                        
+                        NavigationLink(destination: RegionPickingView(region: $region)) {
+                            HStack(alignment: .firstTextBaseline) {
+                                Text(region.name)
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.primary)
+                            }
+                            .padding(13.5)
+                            .background(
+                                Rectangle()
+                                    .fill(Color(UIColor.secondarySystemBackground))
+                                    .cornerRadius(9)
+                            )
+                        }
+                        
+                        
                     }
-                        .padding(13.5)
+                    
+                    
+                    HStack {
+                        Text("Today")
+                            .font(.title)
+                            .bold()
+                        
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Text("Cases")
+                                .bold()
+                            
+                            Text("\(data.last?.cases ?? 0)")
+                        }
+                        Spacer()
+                        Divider()
+                        Spacer()
+                        VStack {
+                            Text("Deaths")
+                                .bold()
+                            
+                            Text("\(Int(data.last?.deaths ?? 0))")
+                        }
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(UIColor.secondarySystemFill))
+                    )
+                    
+                    HStack {
+                        Text("Cumulative Totals")
+                            .font(.title)
+                            .bold()
+                        
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Text("Cases")
+                                .bold()
+                            
+                            Text("\(data.last?.cumulative_cases ?? 0)")
+                        }
+                        Spacer()
+                        Divider()
+                        Spacer()
+                        VStack {
+                            Text("Deaths")
+                                .bold()
+                            
+                            Text("\(Int(data.last?.cumulative_deaths ?? 0))")
+                        }
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(UIColor.secondarySystemFill))
+                    )
+                    
+                    
+
+                    
+                    HStack {
+                        Text("Cases")
+                            .font(.title)
+                            .bold()
+                        
+                        Spacer()
+                    }
+                    
+                    ChartView(entries: data.enumerated().map { ChartDataEntry(x: Double($0.offset), y: Double($0.element.cases))  }, lineThickness: 1.5)
+                        .padding(10)
+                        .frame(height: 250)
                         .background(
                             Rectangle()
+                                
                                 .fill(Color(UIColor.secondarySystemBackground))
-                                .cornerRadius(9)
+                                .cornerRadius(10)
                         )
-                }
-                HStack(alignment: .firstTextBaseline) {
-                    Text("Region: \(region.name)")
-                    Image(systemName: "chevron.down")
-                }
-                .font(.title2)
-                .padding(.bottom, 20)
-                
-                HStack {
-                    Spacer()
-                    VStack {
-                        Text("New Cases")
-                            .font(.title2)
-                            .fontWeight(.medium)
+                    
+                    VStack(alignment: .leading, spacing: 1.5) {
+                        Text("TIME PERIOD")
+                            .font(.caption)
+                            .foregroundColor(Color("secondary-text"))
                         
-                        Text("17")
-                            .font(Font.system(size: 50, weight: .semibold, design: .rounded))
+                        
+                        Picker("", selection: $timePeriod) {
+                            Text("1M").tag(TimePeriod.oneMonth)
+                            Text("3M").tag(TimePeriod.threeMonths)
+                            Text("6M").tag(TimePeriod.sixMonths)
+                            Text("1Y").tag(TimePeriod.oneYear)
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .onChange(of: timePeriod) { _ in
+                            DataModel.updateData(for: region, timePeriod: timePeriod) { newDataPoints in
+                                data = newDataPoints
+                            }
+                        }
+                        
+                        
                     }
-                    .padding(.horizontal, 50)
-                    .padding(.vertical, 20)
-                    .background(
-                        RoundedRectangle(cornerRadius: 15)
-                            .fill(Color.white)
-                            .shadow(radius: 10)
-                    )
-                    Spacer()
-                }
-                
-                HStack {
-                    Text("Cases")
-                        .font(.title)
-                        .bold()
+                    
                     
                     Spacer()
+                    
                 }
-                ChartView(entries: data.enumerated().map { ChartDataEntry(x: Double($0.offset), y: Double($0.element.cases))  }, thick: .constant(2))
-                
-                Picker("", selection: $timePeriod) {
-                    Text("1M").tag(TimePeriod.oneMonth)
-                    Text("3M").tag(TimePeriod.threeMonths)
-                    Text("6M").tag(TimePeriod.sixMonths)
-                    Text("1Y").tag(TimePeriod.oneYear)
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .onChange(of: timePeriod) { _ in
-                    DataModel.updateData(for: region, timePeriod: timePeriod) { newDataPoints in
-                        data = newDataPoints
-                    }
-                }
-                
-                Spacer()
-                
-                
             }
+            .navigationBarHidden(true)
             .padding()
-            .navigationTitle("CovidON")
             .onAppear {
                 DataModel.updateData(for: region, timePeriod: timePeriod) { newDataPoints in
                     data = newDataPoints
@@ -145,6 +217,40 @@ enum TimePeriod: CustomStringConvertible, Hashable {
     }
 }
 
+struct RegionPickingView: View {
+    @Binding var region: Region
+    
+    @Environment(\.presentationMode) private var presentationMode
+    
+    var body: some View {
+        List(Region.allCases) { currentRegion in
+            Button(action: {
+                if currentRegion != region {
+                    region = currentRegion
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }) {
+                HStack {
+                    Text(currentRegion.name)
+                    Spacer()
+                    if region == currentRegion {
+                        Image(systemName: "checkmark")
+                    }
+                }
+            }
+        }
+        .navigationBarTitle("Region Selection")
+                
+
+//            List(Region.allCases, selection: $region) { currentRegion in
+//                Text(currentRegion.name).tag(currentRegion)
+//            }
+//            .navigationTitle("Public Health Region Selection")
+////            .toolbar {
+////                EditButton()
+////            }
+    }
+}
 
 struct APIParameters: Codable {
     var stat: String
@@ -188,7 +294,6 @@ class DataModel {
             loc: region.rawValue,
             after: timePeriod.dateString
         )
-        print(DataModel.monthAgoDateString())
         let url = "https://api.opencovid.ca/summary"
         AF.request(url, method: .get, parameters: params).responseJSON { response in
             guard let data = response.data else {
@@ -217,7 +322,7 @@ class DataModel {
     }
 }
 
-enum Region: String, CaseIterable {
+enum Region: String, Identifiable, CaseIterable {
     case algoma = "3526"
     case brant = "3527"
     case chatamKent = "3540"
@@ -252,6 +357,11 @@ enum Region: String, CaseIterable {
     case wellingtonDufferinGuelph = "3566"
     case womdsorEssex = "3568"
     case york = "3570"
+    
+    
+    var id: String {
+        return rawValue
+    }
     
     var name: String {
         switch self {

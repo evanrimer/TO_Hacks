@@ -12,7 +12,7 @@ import SwiftUI
 struct ChartView: UIViewRepresentable {
     typealias UIViewType = LineChartView
     let entries: [ChartDataEntry]
-    @Binding var thick: Double
+    var lineThickness: CGFloat
     
     func makeUIView(context: Context) -> LineChartView {
         return LineChartView()
@@ -26,6 +26,12 @@ struct ChartView: UIViewRepresentable {
         uiView.legend.enabled = false
         formatAxes(left: uiView.leftAxis, right: uiView.rightAxis, top: uiView.xAxis)
         formatDataSet(dataSet: dataSet)
+        uiView.xAxis.drawGridLinesEnabled = false
+        uiView.xAxis.drawAxisLineEnabled = false
+        uiView.leftAxis.drawAxisLineEnabled = false
+//        uiView.leftAxis.drawGridsLineEnabled = false
+
+
     }
     
     func formatAxes(left: YAxis, right: YAxis, top: XAxis) {
@@ -37,8 +43,13 @@ struct ChartView: UIViewRepresentable {
     func formatDataSet(dataSet: LineChartDataSet) {
         dataSet.drawCirclesEnabled = false
         dataSet.drawValuesEnabled = false
-        dataSet.lineWidth = CGFloat(thick)
-        dataSet.setColor((entries.last?.y ?? 0 > entries.first?.y  ?? 1) ? UIColor.green : UIColor.red)
+        dataSet.lineWidth = lineThickness
+        dataSet.setColor(UIColor.blue)
+//        let colors = [Color.blue.cgColor, Color.clear.cgColor] as CFArray
+//        let colorLocations: [CGFloat] = [0.0, 1.0]
+//        let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors, locations: colorLocations)
+//        dataSet.fill = LinearGradientFill(gradient: gradient!, angle: 90)
+//        dataSet.drawFilledEnabled = true
     }
     
 }
@@ -48,7 +59,7 @@ struct ChartView_Previews: PreviewProvider {
     static var previews: some View {
         ChartView(entries: [ChartDataEntry(x: 1619290130053, y: 0.3413397951438261),
                             ChartDataEntry(x: 1619290426422, y: 0.3421743651388552),
-                            ChartDataEntry(x: 1619290697044, y: 0.3422815498652049)], thick: .constant(8))
+                            ChartDataEntry(x: 1619290697044, y: 0.3422815498652049)], lineThickness: 8)
     }
 }
 
