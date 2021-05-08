@@ -44,7 +44,7 @@ struct ChartView: UIViewRepresentable {
         dataSet.drawCirclesEnabled = false
         dataSet.drawValuesEnabled = false
         dataSet.lineWidth = lineThickness
-        dataSet.setColor(UIColor.blue)
+        dataSet.setColor(UIColor.systemBlue)
 //        let colors = [Color.blue.cgColor, Color.clear.cgColor] as CFArray
 //        let colorLocations: [CGFloat] = [0.0, 1.0]
 //        let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors, locations: colorLocations)

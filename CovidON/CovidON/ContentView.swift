@@ -216,6 +216,7 @@ struct ContentView: View {
                         
                         
                         Picker("", selection: $timePeriod) {
+                            Text("1W").tag(TimePeriod.oneWeek)
                             Text("1M").tag(TimePeriod.oneMonth)
                             Text("3M").tag(TimePeriod.threeMonths)
                             Text("6M").tag(TimePeriod.sixMonths)
@@ -266,6 +267,7 @@ struct ContentView: View {
 }
 
 enum TimePeriod: CustomStringConvertible, Hashable {
+    case oneWeek
     case oneMonth
     case threeMonths
     case sixMonths
@@ -273,6 +275,7 @@ enum TimePeriod: CustomStringConvertible, Hashable {
     
     var description: String {
         switch self {
+        case .oneWeek: return "1W"
         case .oneMonth: return "1M"
         case .threeMonths: return "3M"
         case .sixMonths: return "6M"
@@ -284,6 +287,8 @@ enum TimePeriod: CustomStringConvertible, Hashable {
         let currentDate = Date()
         let newDate: Date
         switch self {
+        case .oneWeek:
+            newDate = Calendar.current.date(byAdding: .day, value: -7, to: currentDate)!
         case .oneMonth:
             newDate = Calendar.current.date(byAdding: .month, value: -1, to: currentDate)!
         case .threeMonths:
