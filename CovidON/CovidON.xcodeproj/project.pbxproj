@@ -12,6 +12,8 @@
 		C2C56DAF2646F1C0006F59E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2C56DAE2646F1C0006F59E9 /* Assets.xcassets */; };
 		C2C56DB22646F1C0006F59E9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2C56DB12646F1C0006F59E9 /* Preview Assets.xcassets */; };
 		C2C56DBB2646FC08006F59E9 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C2C56DBA2646FC08006F59E9 /* Alamofire */; };
+		C2C56DBE2646FE2D006F59E9 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = C2C56DBD2646FE2D006F59E9 /* SwiftyJSON */; };
+		C2C56DC126470043006F59E9 /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = C2C56DC026470043006F59E9 /* Charts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2C56DBE2646FE2D006F59E9 /* SwiftyJSON in Frameworks */,
+				C2C56DC126470043006F59E9 /* Charts in Frameworks */,
 				C2C56DBB2646FC08006F59E9 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -89,6 +93,8 @@
 			name = CovidON;
 			packageProductDependencies = (
 				C2C56DBA2646FC08006F59E9 /* Alamofire */,
+				C2C56DBD2646FE2D006F59E9 /* SwiftyJSON */,
+				C2C56DC026470043006F59E9 /* Charts */,
 			);
 			productName = CovidON;
 			productReference = C2C56DA72646F1BD006F59E9 /* CovidON.app */;
@@ -119,6 +125,8 @@
 			mainGroup = C2C56D9E2646F1BD006F59E9;
 			packageReferences = (
 				C2C56DB92646FC08006F59E9 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				C2C56DBC2646FE2D006F59E9 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
+				C2C56DBF26470043006F59E9 /* XCRemoteSwiftPackageReference "Charts" */,
 			);
 			productRefGroup = C2C56DA82646F1BD006F59E9 /* Products */;
 			projectDirPath = "";
@@ -346,6 +354,22 @@
 				minimumVersion = 5.2.0;
 			};
 		};
+		C2C56DBC2646FE2D006F59E9 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
+		C2C56DBF26470043006F59E9 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -353,6 +377,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C2C56DB92646FC08006F59E9 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		C2C56DBD2646FE2D006F59E9 /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2C56DBC2646FE2D006F59E9 /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
+		};
+		C2C56DC026470043006F59E9 /* Charts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2C56DBF26470043006F59E9 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = Charts;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

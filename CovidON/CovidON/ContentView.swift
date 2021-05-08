@@ -6,19 +6,62 @@
 //
 
 import SwiftUI
+import SwiftyJSON
+import Alamofire
 
 struct ContentView: View {
+    
+    @State var region: Region = .ontario
+    
     var body: some View {
         NavigationView {
-            Text("CovidON")
-                .padding()
-                .foregroundColor(.blue)
+            
+            VStack(alignment: .leading) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Region: \(region.name)")
+                    Image(systemName: "chevron.down")
+                }
                 .font(.title2)
-                .navigationTitle("CovidON")
+                .padding(.bottom, 20)
+                
+                HStack {
+                    Text("Active cases")
+                        .font(.title)
+                        .bold()
+                    Spacer()
+                }
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("CovidON")
                 
         }
         
         
+    }
+}
+
+//class DataModel {
+//    static func getJSON(for region: Region) -> JSON {
+//
+//    }
+//}
+
+enum Region {
+    
+    case ontario
+    
+    var name: String {
+        switch self {
+        case .ontario: return "Ontario"
+        }
+    }
+}
+
+struct ChartView: View {
+    var body: some View {
+        Text("")
     }
 }
 
