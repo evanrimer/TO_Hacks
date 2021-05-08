@@ -173,7 +173,7 @@ struct ContentView: View {
 
                     
                     HStack {
-                        Text("Cases")
+                        Text("New Cases")
                             .font(.title)
                             .bold()
                         

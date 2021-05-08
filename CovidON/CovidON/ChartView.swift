@@ -29,6 +29,7 @@ struct ChartView: UIViewRepresentable {
         uiView.xAxis.drawGridLinesEnabled = false
         uiView.xAxis.drawAxisLineEnabled = false
         uiView.leftAxis.drawAxisLineEnabled = false
+        uiView.isUserInteractionEnabled = false
 //        uiView.leftAxis.drawGridsLineEnabled = false
 
 
@@ -44,6 +45,7 @@ struct ChartView: UIViewRepresentable {
         dataSet.drawCirclesEnabled = false
         dataSet.drawValuesEnabled = false
         dataSet.lineWidth = lineThickness
+        
         dataSet.setColor(UIColor.systemBlue)
 //        let colors = [Color.blue.cgColor, Color.clear.cgColor] as CFArray
 //        let colorLocations: [CGFloat] = [0.0, 1.0]
