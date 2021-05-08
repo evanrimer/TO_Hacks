@@ -12,13 +12,35 @@ import Charts
 
 struct ContentView: View {
     
-    @State var region: Region = .toronto
+    @State var region: Region = .ontario
     @State var data: [DataPoint] = []
+    @State var ontarioData: [OntarioDataPoint] = []
     @State var text: String = ""
     @State var timePeriod = TimePeriod.oneMonth
     @State var isPickingRegion = false
     
     @Environment(\.colorScheme) var colorScheme
+    
+    var deaths: Int {
+        return (region == .ontario ? ontarioData.last?.deaths : data.last?.deaths) ?? 0
+    }
+    var cumulativeDeaths: Int {
+        return (region == .ontario ? ontarioData.last?.cumulative_deaths : data.last?.cumulative_deaths) ?? 0
+    }
+    var cases: Int {
+        return (region == .ontario ? ontarioData.last?.cases : data.last?.cases) ?? 0
+    }
+    var cumulativeCases: Int {
+        return (region == .ontario ? ontarioData.last?.cumulative_cases : data.last?.cumulative_cases) ?? 0
+    }
+    
+    var casesChartDataEntries: [ChartDataEntry] {
+        if region == .ontario {
+            return ontarioData.enumerated().map { ChartDataEntry(x: Double($0.offset), y: Double($0.element.cases))  }
+        } else {
+            return data.enumerated().map { ChartDataEntry(x: Double($0.offset), y: Double($0.element.cases))  }
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -50,6 +72,7 @@ struct ContentView: View {
                         
                         
                     }
+                    .padding(.bottom, 10)
                     
                     
                     HStack {
@@ -66,7 +89,7 @@ struct ContentView: View {
                             Text("Cases")
                                 .bold()
                             
-                            Text("\(data.last?.cases ?? 0)")
+                            Text("\(cases)")
                         }
                         Spacer()
                         Divider()
@@ -75,15 +98,29 @@ struct ContentView: View {
                             Text("Deaths")
                                 .bold()
                             
-                            Text("\(Int(data.last?.deaths ?? 0))")
+                            Text("\(deaths)")
+                        }
+                        if region == .ontario {
+                            Spacer()
+                            Divider()
+                            Spacer()
+                            VStack {
+                                Text("Vaccinations")
+                                    .bold()
+                                    .multilineTextAlignment(.center)
+                                
+                                Text("\(ontarioData.last?.avaccine ?? 0)")
+                            }
+                            
                         }
                         Spacer()
                     }
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(UIColor.secondarySystemFill))
+                            .fill(Color(UIColor.secondarySystemBackground))
                     )
+                    .padding(.bottom, 7.5)
                     
                     HStack {
                         Text("Cumulative Totals")
@@ -99,7 +136,7 @@ struct ContentView: View {
                             Text("Cases")
                                 .bold()
                             
-                            Text("\(data.last?.cumulative_cases ?? 0)")
+                            Text("\(cumulativeCases)")
                         }
                         Spacer()
                         Divider()
@@ -108,15 +145,29 @@ struct ContentView: View {
                             Text("Deaths")
                                 .bold()
                             
-                            Text("\(Int(data.last?.cumulative_deaths ?? 0))")
+                            Text("\(cumulativeDeaths)")
+                        }
+                        if region == .ontario {
+                            Spacer()
+                            Divider()
+                            Spacer()
+                            VStack {
+                                Text("Vaccinations")
+                                    .bold()
+                                    .multilineTextAlignment(.center)
+                                
+                                Text("\(ontarioData.last?.cumulative_avaccine ?? 0)")
+                            }
+                            
                         }
                         Spacer()
                     }
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(UIColor.secondarySystemFill))
+                            .fill(Color(UIColor.secondarySystemBackground))
                     )
+                    .padding(.bottom, 7.5)
                     
                     
 
@@ -129,15 +180,34 @@ struct ContentView: View {
                         Spacer()
                     }
                     
-                    ChartView(entries: data.enumerated().map { ChartDataEntry(x: Double($0.offset), y: Double($0.element.cases))  }, lineThickness: 1.5)
+                    ChartView(entries: casesChartDataEntries, lineThickness: 1.5)
                         .padding(10)
                         .frame(height: 250)
                         .background(
                             Rectangle()
-                                
                                 .fill(Color(UIColor.secondarySystemBackground))
                                 .cornerRadius(10)
                         )
+                    
+                    if region == .ontario {
+                        HStack {
+                            Text("Active Cases")
+                                .font(.title)
+                                .bold()
+                            
+                            Spacer()
+                        }
+                        .padding(.top, 7.5)
+                        
+                        ChartView(entries: ontarioData.enumerated().map { ChartDataEntry(x: Double($0.offset), y: Double($0.element.active_cases))  }, lineThickness: 1.5)
+                            .padding(10)
+                            .frame(height: 250)
+                            .background(
+                                Rectangle()
+                                    .fill(Color(UIColor.secondarySystemBackground))
+                                    .cornerRadius(10)
+                            )
+                    }
                     
                     VStack(alignment: .leading, spacing: 1.5) {
                         Text("TIME PERIOD")
@@ -153,9 +223,16 @@ struct ContentView: View {
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .onChange(of: timePeriod) { _ in
-                            DataModel.updateData(for: region, timePeriod: timePeriod) { newDataPoints in
-                                data = newDataPoints
+                            if region == .ontario {
+                                DataModel.updateDataForOntario(timePeriod: timePeriod) { newDataPoints in
+                                    ontarioData = newDataPoints
+                                }
+                            } else {
+                                DataModel.updateData(for: region, timePeriod: timePeriod) { newDataPoints in
+                                    data = newDataPoints
+                                }
                             }
+                            
                         }
                         
                         
@@ -169,9 +246,18 @@ struct ContentView: View {
             .navigationBarHidden(true)
             .padding()
             .onAppear {
-                DataModel.updateData(for: region, timePeriod: timePeriod) { newDataPoints in
-                    data = newDataPoints
+                if region == .ontario {
+                    DataModel.updateDataForOntario(timePeriod: timePeriod) { newDataPoints in
+                        ontarioData = newDataPoints
+                    }
+                    data = []
+                } else {
+                    DataModel.updateData(for: region, timePeriod: timePeriod) { newDataPoints in
+                        data = newDataPoints
+                    }
+                    ontarioData = []
                 }
+                
             }
         }
         
@@ -240,15 +326,6 @@ struct RegionPickingView: View {
             }
         }
         .navigationBarTitle("Region Selection")
-                
-
-//            List(Region.allCases, selection: $region) { currentRegion in
-//                Text(currentRegion.name).tag(currentRegion)
-//            }
-//            .navigationTitle("Public Health Region Selection")
-////            .toolbar {
-////                EditButton()
-////            }
     }
 }
 
@@ -263,32 +340,33 @@ struct DataPoint: Codable {
     var cumulative_cases: Int
     var cumulative_deaths: Int
     var date: String
-    var deaths: Double
+    var deaths: Int
     var province: String
-    var health_region: String
 }
-//struct DataPoint: Codable {
-//    var active_cases: Int
-//    var active_cases_change: Int
-//    var avaccine: Int
-//    var cases: Int
-//    var cumulative_avaccine: Int
-//    var cumulative_cases: Int
-//    var cumulative_cvaccine: Int
-//    var cumulative_deaths: Int
-//    var cumulative_dvaccine: Int
-//    var cumulative_recovered: Int
-//    var cumulative_testing: Int
-//    var cvaccine: Int
-//    var date: String
-//    var deaths: Int
-//    var dvaccine: Int
-//    var province: String
-//    var recovered: Int
-//    var testing: Int
-//}
+
+struct OntarioDataPoint: Codable {
+    var active_cases: Int
+    var active_cases_change: Int
+    var avaccine: Int
+    var cases: Int
+    var cumulative_avaccine: Int
+    var cumulative_cases: Int
+    var cumulative_cvaccine: Int
+    var cumulative_deaths: Int
+    var cumulative_dvaccine: Int
+    var cumulative_recovered: Int
+    var cumulative_testing: Int
+    var cvaccine: Int
+    var date: String
+    var deaths: Int
+    var dvaccine: Int
+    var province: String
+    var recovered: Int
+    var testing: Int
+}
+
 class DataModel {
-    static func updateData(for region: Region, timePeriod: TimePeriod, completion: @escaping ([DataPoint]) -> Void){
+    static func updateData(for region: Region, timePeriod: TimePeriod, completion: @escaping ([DataPoint]) -> Void) {
         let params = APIParameters(
             stat: "cases",
             loc: region.rawValue,
@@ -312,17 +390,76 @@ class DataModel {
             
         }
     }
-    static func monthAgoDateString() -> String {
-        let currentDate = Date()
-        let date = Calendar.current.date(byAdding: .month, value: -1, to: currentDate)!
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd-MM-yyyy"
-        return dateFormatter.string(from: date)
+    
+    static func updateDataForOntario(timePeriod: TimePeriod, completion: @escaping ([OntarioDataPoint]) -> Void){
+        let params = APIParameters(
+            stat: "cases",
+            loc: "ON",
+            after: timePeriod.dateString
+        )
+        let url = "https://api.opencovid.ca/summary"
+        AF.request(url, method: .get, parameters: params).responseJSON { response in
+            guard let data = response.data else {
+                fatalError("Error, could not parse JSON.")
+            }
+            
+            if let json = try? JSON(data: data) {
+                if let arr = json["summary"].array {
+                    let dataPoints: [OntarioDataPoint] = arr.map { dataPoint in
+                        
+                        OntarioDataPoint(
+                            active_cases: dataPoint["active_cases"].intValue,
+                            active_cases_change: dataPoint["active_cases_change"].intValue,
+                            avaccine: dataPoint["avaccine"].int ?? 0,
+                            cases: dataPoint["cases"].intValue,
+                            cumulative_avaccine: dataPoint["cumulative_avaccine"].int ?? 0,
+                            cumulative_cases: dataPoint["cumulative_cases"].intValue,
+                            cumulative_cvaccine: dataPoint["cumulative_cvaccine"].int ?? 0,
+                            cumulative_deaths: dataPoint["cumulative_deaths"].intValue,
+                            cumulative_dvaccine: dataPoint["cumulative_dvaccine"].int ?? 0,
+                            cumulative_recovered: dataPoint["cumulative_recovered"].intValue,
+                            cumulative_testing: dataPoint["cumulative_testing"].intValue,
+                            cvaccine: dataPoint["cvaccine"].int ?? 0,
+                            date: dataPoint["date"].stringValue,
+                            deaths: dataPoint["deaths"].intValue,
+                            dvaccine: dataPoint["dvaccine"].int ?? 0,
+                            province: dataPoint["province"].stringValue,
+                            recovered: dataPoint["recovered"].intValue,
+                            testing: dataPoint["testing"].intValue
+                        )
+//                        dataPoint["active_cases"]
+//                        dataPoint["active_cases_change"]
+//                        dataPoint["avaccine"]
+//                        dataPoint["cases"]
+//                        dataPoint["cumulative_avaccine"]
+//                        dataPoint["cumulative_cases"]
+//                        dataPoint["cumulative_cvaccine"]
+//                        dataPoint["cumulative_deaths"]
+//                        dataPoint["cumulative_dvaccine"]
+//                        dataPoint["cumulative_recovered"]
+//                        dataPoint["cumulative_testing"]
+//                        dataPoint["cvaccine"]
+//                        dataPoint["date"]
+//                        dataPoint["deaths"]
+//                        dataPoint["dvaccine"]
+//                        dataPoint["province"]
+//                        dataPoint["recovered"]
+//                        dataPoint["testing"]
+//
+//                        let decoder = JSONDecoder()
+//                        return try! decoder.decode(OntarioDataPoint.self, from: dataPoint.rawData())
+                    }
+                    completion(dataPoints)
+                }
+            }
+            
+        }
     }
+    
 }
 
 enum Region: String, Identifiable, CaseIterable {
+    case ontario = "ON"
     case algoma = "3526"
     case brant = "3527"
     case chatamKent = "3540"
@@ -365,6 +502,7 @@ enum Region: String, Identifiable, CaseIterable {
     
     var name: String {
         switch self {
+        case .ontario: return "All (Ontario)"
         case .algoma: return "Algoma"
         case .brant: return "Brant"
         case .chatamKent: return "Chatham-Kent"
