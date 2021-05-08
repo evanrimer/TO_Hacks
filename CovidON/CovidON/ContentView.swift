@@ -76,7 +76,7 @@ struct ContentView: View {
                     
                     
                     HStack {
-                        Text("Today")
+                        Text("Yesterday")
                             .font(.title)
                             .bold()
                         
@@ -250,6 +250,7 @@ struct ContentView: View {
                 if region == .ontario {
                     DataModel.updateDataForOntario(timePeriod: timePeriod) { newDataPoints in
                         ontarioData = newDataPoints
+                        print(ontarioData.last!.date)
                     }
                     data = []
                 } else {
