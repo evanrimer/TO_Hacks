@@ -33,6 +33,13 @@ struct ContentView: View {
     var cumulativeCases: Int {
         return (region == .ontario ? ontarioData.last?.cumulative_cases : data.last?.cumulative_cases) ?? 0
     }
+    var yesterdayDate: String {
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM d, yyyy"
+        return dateFormatter.string(from: yesterday)
+    }
     
     var casesChartDataEntries: [ChartDataEntry] {
         if region == .ontario {
@@ -76,7 +83,7 @@ struct ContentView: View {
                     
                     
                     HStack {
-                        Text("Yesterday")
+                        Text("Yesterday (\(yesterdayDate))")
                             .font(.title)
                             .bold()
                         
@@ -250,7 +257,6 @@ struct ContentView: View {
                 if region == .ontario {
                     DataModel.updateDataForOntario(timePeriod: timePeriod) { newDataPoints in
                         ontarioData = newDataPoints
-                        print(ontarioData.last!.date)
                     }
                     data = []
                 } else {
